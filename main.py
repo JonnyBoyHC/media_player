@@ -82,8 +82,7 @@ class Window(QWidget):
         self.mediaPlayer.durationChanged.connect(self.duration_changed)
 
     def open_file(self):
-        file_name, _ = QFileDialog.getOpenFileName(self, "Open Video")
-        # link_name, _ = QFileDialog.get
+        file_name, _ = QFileDialog.getOpenFileName(self, "Open Link")
 
         if file_name != '':
             self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(file_name)))
