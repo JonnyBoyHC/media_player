@@ -88,15 +88,19 @@ class Window(QWidget):
             self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(file_name)))
             self.play_Btn.setEnabled(True)
             self.stop_Btn.setEnabled(True)
+            print(f'\nVideo Loaded from: \n{file_name}\n')
 
     def stop_video(self):
         self.mediaPlayer.stop()
+        print(f'Stopped!!!')
 
     def play_video(self):
         if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
             self.mediaPlayer.pause()
+            print(f'Paused.')
         else:
             self.mediaPlayer.play()
+            print(f'Playing...')
 
     def video_state_changed(self, state):
         if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
