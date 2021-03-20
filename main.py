@@ -12,14 +12,14 @@ class Window(QWidget):
         super().__init__()
 
         # Set window interface
+        self.setWindowTitle("COMP6125 - Group Assignment 1 - Media Player")
+        self.setGeometry(400, 150, 800, 550)
+        self.setWindowIcon(QIcon('player.png'))
         self.label = QLabel()
         self.play_Btn = QPushButton()
         self.stop_Btn = QPushButton()
         self.mediaPlayer = QMediaPlayer(None, QMediaPlayer.VideoSurface)
         self.slider = QSlider(Qt.Horizontal)
-        self.setWindowTitle("COMP6125 - Group Assignment 1 - Media Player")
-        self.setGeometry(400, 150, 800, 550)
-        self.setWindowIcon(QIcon('player.png'))
 
         # Set Background to black color
         bg_color = self.palette()
@@ -37,7 +37,7 @@ class Window(QWidget):
         video_widget = QVideoWidget()
 
         # Create open button
-        open_btn = QPushButton('Open Video')
+        open_btn = QPushButton('Open Link')
         open_btn.clicked.connect(self.open_file)
 
         # Create button for stopping
@@ -57,17 +57,17 @@ class Window(QWidget):
         # Create label
         self.label.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
 
-        # Create hbox layout
+        # Create horizontal box layout
         hbox_Layout = QHBoxLayout()
         hbox_Layout.setContentsMargins(0, 0, 0, 0)
 
-        # Set widgets to the hbox layout
+        # Set widgets to the horizontal box layout
         hbox_Layout.addWidget(open_btn)
         hbox_Layout.addWidget(self.stop_Btn)
         hbox_Layout.addWidget(self.play_Btn)
         hbox_Layout.addWidget(self.slider)
 
-        # Create vbox layout
+        # Create vertical box layout
         vbox_Layout = QVBoxLayout()
         vbox_Layout.addWidget(video_widget)
         vbox_Layout.addLayout(hbox_Layout)
@@ -82,10 +82,11 @@ class Window(QWidget):
         self.mediaPlayer.durationChanged.connect(self.duration_changed)
 
     def open_file(self):
-        filename, _ = QFileDialog.getOpenFileName(self, "Open Video")
+        file_name, _ = QFileDialog.getOpenFileName(self, "Open Video")
+        # link_name, _ = QFileDialog.get
 
-        if filename != '':
-            self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(filename)))
+        if file_name != '':
+            self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(file_name)))
             self.play_Btn.setEnabled(True)
             self.stop_Btn.setEnabled(True)
 
