@@ -1,12 +1,12 @@
-from PyQt5.QtWidgets import QApplication, QWidget, QStyle, QSizePolicy, QFileDialog, QPushButton, QHBoxLayout, \
-    QVBoxLayout, QLabel, QSlider, QLineEdit, QStatusBar
-from PyQt5.QtMultimediaWidgets import QVideoWidget
-from PyQt5.QtCore import Qt, QUrl
-from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
-from PyQt5.QtGui import QIcon, QPalette
 import sys
 import pafy
 import validators
+from PyQt5.QtCore import Qt, QUrl
+from PyQt5.QtGui import QIcon, QPalette
+from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
+from PyQt5.QtMultimediaWidgets import QVideoWidget
+from PyQt5.QtWidgets import QApplication, QWidget, QStyle, QSizePolicy, QPushButton, QHBoxLayout, \
+    QVBoxLayout, QLabel, QSlider, QLineEdit
 
 
 class Window(QWidget):
@@ -24,7 +24,7 @@ class Window(QWidget):
         self.stop_Btn = QPushButton()
         self.mediaPlayer = QMediaPlayer(None, QMediaPlayer.VideoSurface)
         self.slider = QSlider(Qt.Horizontal)
-        
+
         # Grab url link content from youtube
         self.url = 'https://www.youtube.com/watch?v=oCKrKtk-rDw'
         self.video = pafy.new(self.url)
@@ -46,10 +46,10 @@ class Window(QWidget):
 
         # Create video widget object
         video_widget = QVideoWidget()
-        
+
         # Create text box
         self.textbox.setReadOnly(False)
-        
+
         # Create button to open link
         self.open_Btn.setEnabled(True)
         self.open_Btn.setText("Open Link")
@@ -97,18 +97,18 @@ class Window(QWidget):
         self.mediaPlayer.stateChanged.connect(self.video_state_changed)
         self.mediaPlayer.positionChanged.connect(self.position_changed)
         self.mediaPlayer.durationChanged.connect(self.duration_changed)
-        
+
         # Set URL link to playing content
         self.mediaPlayer.setMedia(QMediaContent(QUrl(self.play_url)))
 
     def stop_video(self):
         self.mediaPlayer.stop()
         print(f'Stopped!!!\n')
-        
+
     def get_link(self):
         # Grab new url link content from the text box
         self.url = self.textbox.text()
-        
+
         # Validate if the new url link is true, then update new link
         try:
             if validators.url(self.url) == True and self.url[:32] == 'https://www.youtube.com/watch?v=':
@@ -134,9 +134,9 @@ class Window(QWidget):
                   f'\nLength: {self.video.duration}; Likes: {self.video.likes}; Dislikes: {self.video.dislikes}')
             print(f'Resolution: {self.best.resolution}')
             print(f'Video Format: {self.best.extension}')
-            print(f'File Size: {round(self.best.get_filesize()/1024**2,2)}MB')
+            print(f'File Size: {round(self.best.get_filesize() / 1024 ** 2, 2)}MB')
             print("\n")
-            
+
     def video_state_changed(self, state):
         if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
             self.play_Btn.setIcon(
