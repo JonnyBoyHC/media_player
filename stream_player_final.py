@@ -1,17 +1,13 @@
 from PyQt5.QtWidgets import QApplication, QWidget, QStyle, QSizePolicy, QFileDialog, QPushButton, QHBoxLayout, \
-    QVBoxLayout, QLabel, QSlider
+    QVBoxLayout, QLabel, QSlider, QLineEdit, QStatusBar
 from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtCore import Qt, QUrl
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from PyQt5.QtGui import QIcon, QPalette
 import sys
 import pafy
+import validators
 
-# Grab url link content from youtube
-url = 'https://www.youtube.com/watch?v=oCKrKtk-rDw'
-video = pafy.new(url)
-best = video.getbest()
-play_url = best.url
 
 class Window(QWidget):
     def __init__(self):
@@ -22,10 +18,19 @@ class Window(QWidget):
         self.setGeometry(400, 150, 800, 550)
         self.setWindowIcon(QIcon('player.png'))
         self.label = QLabel()
+        self.textbox = QLineEdit('Please paste new youtube link here...')
+        self.open_Btn = QPushButton()
         self.play_Btn = QPushButton()
         self.stop_Btn = QPushButton()
         self.mediaPlayer = QMediaPlayer(None, QMediaPlayer.VideoSurface)
         self.slider = QSlider(Qt.Horizontal)
+        
+        # Grab url link content from youtube
+        self.url = 'https://www.youtube.com/watch?v=oCKrKtk-rDw'
+        self.video = pafy.new(self.url)
+        self.best = self.video.getbest()
+        self.play_url = self.best.url
+        print(f'\nLoaded Url Link: \n{self.play_url}\n')
 
         # Set Background to black color
         bg_color = self.palette()
@@ -41,6 +46,14 @@ class Window(QWidget):
 
         # Create video widget object
         video_widget = QVideoWidget()
+        
+        # Create text box
+        self.textbox.setReadOnly(False)
+        
+        # Create button to open link
+        self.open_Btn.setEnabled(True)
+        self.open_Btn.setText("Open Link")
+        self.open_Btn.clicked.connect(self.get_link)
 
         # Create button for stopping
         self.stop_Btn.setEnabled(True)
@@ -64,6 +77,7 @@ class Window(QWidget):
         hbox_Layout.setContentsMargins(0, 0, 0, 0)
 
         # Set widgets to the horizontal box layout
+        hbox_Layout.addWidget(self.open_Btn)
         hbox_Layout.addWidget(self.stop_Btn)
         hbox_Layout.addWidget(self.play_Btn)
         hbox_Layout.addWidget(self.slider)
@@ -71,6 +85,7 @@ class Window(QWidget):
         # Create vertical box layout
         vbox_Layout = QVBoxLayout()
         vbox_Layout.addWidget(video_widget)
+        vbox_Layout.addWidget(self.textbox)
         vbox_Layout.addLayout(hbox_Layout)
         vbox_Layout.addWidget(self.label)
 
@@ -84,11 +99,28 @@ class Window(QWidget):
         self.mediaPlayer.durationChanged.connect(self.duration_changed)
         
         # Set URL link to playing content
-        self.mediaPlayer.setMedia(QMediaContent(QUrl(play_url)))
+        self.mediaPlayer.setMedia(QMediaContent(QUrl(self.play_url)))
 
     def stop_video(self):
         self.mediaPlayer.stop()
         print(f'Stopped!!!\n')
+        
+    def get_link(self):
+        # Grab new url link content from the text box
+        self.url = self.textbox.text()
+        
+        # Validate if the new url link is true, then update new link
+        try:
+            if validators.url(self.url) == True and self.url[:32] == 'https://www.youtube.com/watch?v=':
+                self.video = pafy.new(self.url)
+                self.best = self.video.getbest()
+                self.play_url = self.best.url
+                self.mediaPlayer.setMedia(QMediaContent(QUrl(self.play_url)))
+                print(f'\nLoaded Url Link: \n{self.play_url}\n')
+            else:
+                print(f'\nInvalid Url Link, please try again!!!\n')
+        except:
+            print(f'\nInvalid Url Link, please try again!!!\n')
 
     def play_video(self):
         if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
@@ -97,12 +129,12 @@ class Window(QWidget):
         else:
             self.mediaPlayer.play()
             print(f'Playing...')
-            print(f'Title: {video.title}')
-            print(f'Rating: {video.rating}; Viewcount: {video.viewcount}; Author: {video.author}'
-                  f'\nLength: {video.duration}; Likes: {video.likes}; Dislikes: {video.dislikes}')
-            print(f'Resolution: {best.resolution}')
-            print(f'Video Format: {best.extension}')
-            print(f'File Size: {best.get_filesize()}')
+            print(f'Title: {self.video.title}')
+            print(f'Rating: {self.video.rating}; Viewcount: {self.video.viewcount}; Author: {self.video.author}'
+                  f'\nLength: {self.video.duration}; Likes: {self.video.likes}; Dislikes: {self.video.dislikes}')
+            print(f'Resolution: {self.best.resolution}')
+            print(f'Video Format: {self.best.extension}')
+            print(f'File Size: {round(self.best.get_filesize()/1024**2,2)}MB')
             print("\n")
             
     def video_state_changed(self, state):
